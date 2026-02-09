@@ -1,4 +1,4 @@
-package net.kcww.ec;
+package net.kcww.ec.sga;
 
 import java.util.Random;
 
@@ -12,7 +12,7 @@ public class SimpleGA {
     // --- Data Structures ---
     // Population: an array of individuals (Binary Strings)
     static String[] candidate = new String[POPULATION_SIZE];
-    
+
     // Fitness: keeps fit[.] corresponding to candidate[.]
     static double[] fit = new double[POPULATION_SIZE];
 
@@ -93,20 +93,20 @@ public class SimpleGA {
         // for i = 1 to population size, step 2
         // (Using 0-based index: 0 to size-1, step 2)
         for (int i = 0; i < POPULATION_SIZE; i += 2) {
-            
+
             // 3. Select good parents
             int parentAIndex = pickParent();
             int parentBIndex = pickParent();
-            
+
             String parentA = candidate[parentAIndex];
             String parentB = candidate[parentBIndex];
 
             // 4. Use single point crossover
             // We generate two children at once as per requirements
             String[] children = singleCross(parentA, parentB);
-            
+
             nextCandidate[i] = children[0];
-            
+
             // Check bounds just in case POP_SIZE is odd (though we set it to 10)
             if (i + 1 < POPULATION_SIZE) {
                 nextCandidate[i + 1] = children[1];

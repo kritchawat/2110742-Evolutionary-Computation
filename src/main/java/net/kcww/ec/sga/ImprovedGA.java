@@ -1,4 +1,4 @@
-package net.kcww.ec;
+package net.kcww.ec.sga;
 
 import java.util.Random;
 

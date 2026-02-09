@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:id="rootBorderPane" prefHeight="750.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="net.kcww.ec.eightqueen.EightQueensFX">
+    <padding>
+        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+    </padding>
+
+    <!-- RIGHT: Control Panel -->
+    <right>
+        <VBox prefWidth="250.0" spacing="15.0"
+              style="-fx-background-color: #f4f4f4; -fx-border-color: #d0d0d0; -fx-border-radius: 5;"
+              BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <children>
+                <Label text="Settings">
+                    <font>
+                        <Font name="System Bold" size="16.0"/>
+                    </font>
+                </Label>
+
+                <RadioButton fx:id="rbBacktrack" selected="true" text="Deterministic Backtrack">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="methodGroup"/>
+                    </toggleGroup>
+                    <tooltip>
+                        <Tooltip text="Systematic search. Guaranteed to find a solution if one exists."/>
+                    </tooltip>
+                </RadioButton>
+
+                <RadioButton fx:id="rbLasVegas" text="Pure Las Vegas (Random)" toggleGroup="$methodGroup">
+                    <tooltip>
+                        <Tooltip text="Places queens randomly column by column. Restarts if dead-end."/>
+                    </tooltip>
+                </RadioButton>
+
+                <RadioButton fx:id="rbMixed" text="Mixed (Random + Backtrack)" toggleGroup="$methodGroup">
+                    <tooltip>
+                        <Tooltip text="Places K queens randomly, then solves the rest with backtracking."/>
+                    </tooltip>
+                </RadioButton>
+
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label text="Random Queens (k):"/>
+                        <Spinner fx:id="mixedSpinner" prefWidth="60.0">
+                            <tooltip>
+                                <Tooltip text="Number of queens to place randomly (1-7)"/>
+                            </tooltip>
+                        </Spinner>
+                    </children>
+                </HBox>
+
+                <Separator prefWidth="200.0"/>
+
+                <!-- Animation Controls -->
+                <Label text="Animation Control">
+                    <font>
+                        <Font name="System Bold" size="12.0"/>
+                    </font>
+                </Label>
+                <CheckBox fx:id="chkAnimate" selected="true" text="Animate Process"/>
+                <CheckBox fx:id="chkShowTree" selected="true" text="Show Decision Tree"/>
+                <CheckBox fx:id="chkShowLog" selected="true" text="Show Log Panel"/>
+
+                <Label text="Speed (Delay ms):"/>
+                <Slider fx:id="speedSlider" blockIncrement="50.0" max="500.0" min="1.0" value="50.0"
+                        showTickMarks="true" showTickLabels="true"/>
+
+                <HBox spacing="10.0">
+                    <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#togglePause" text="Pause"
+                            prefWidth="100.0"/>
+                    <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopSolver" text="Stop"
+                            prefWidth="100.0" style="-fx-text-fill: red;"/>
+                </HBox>
+
+                <Separator prefWidth="200.0"/>
+
+                <Button fx:id="runButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#runSolver" style="-fx-base: #4CAF50; -fx-font-weight: bold; -fx-text-fill: white;"
+                        text="Run Algorithm">
+                    <tooltip>
+                        <Tooltip text="Start the simulation with selected settings"/>
+                    </tooltip>
+                </Button>
+
+                <Button fx:id="clearButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#clearBoard" text="Clear Board">
+                    <tooltip>
+                        <Tooltip text="Clear all queens from the board"/>
+                    </tooltip>
+                </Button>
+
+                <Separator prefWidth="200.0"/>
+
+                <Label fx:id="statusLabel" style="-fx-text-fill: #333333;" text="Ready" wrapText="true"/>
+            </children>
+            <BorderPane.margin>
+                <Insets left="15.0"/>
+            </BorderPane.margin>
+        </VBox>
+    </right>
+
+    <!-- CENTER: Split View (Board + Tree) -->
+    <center>
+        <SplitPane fx:id="mainSplitPane" dividerPositions="0.5" BorderPane.alignment="CENTER">
+            <items>
+                <!-- Left: Board -->
+                <StackPane style="-fx-border-color: #333; -fx-border-width: 2px;">
+                    <children>
+                        <GridPane fx:id="boardGrid" alignment="CENTER"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                </StackPane>
+
+                <!-- Right: Decision Tree Canvas -->
+                <ScrollPane fx:id="treeScrollPane" pannable="true">
+                    <content>
+                        <Group>
+                            <Pane fx:id="treePane" style="-fx-background-color: white;"/>
+                        </Group>
+                    </content>
+                </ScrollPane>
+            </items>
+        </SplitPane>
+    </center>
+
+    <!-- BOTTOM: Log Panel -->
+    <bottom>
+        <AnchorPane fx:id="logContainer" prefHeight="100.0" BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets top="15.0"/>
+            </BorderPane.margin>
+            <children>
+                <TextArea fx:id="logArea" editable="false" text="Select an algorithm and click Run.&#10;"
+                          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                <Button mnemonicParsing="false" onAction="#clearLog" text="Clear Log"
+                        AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0"
+                        style="-fx-background-color: #dddddd; -fx-border-color: #aaaaaa; -fx-border-radius: 3;"/>
+            </children>
+        </AnchorPane>
+    </bottom>
+</BorderPane>
