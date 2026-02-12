@@ -1,4 +1,4 @@
-package net.kcww.ec.eightqueen;
+package net.kcww.ec.eightqueens;
 
 import javafx.application.Application;
 
