@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane prefHeight="800.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.kcww.ec.nqueens.NQueensController">
+
+    <!-- CENTER: Board and Tree Split View -->
+    <center>
+        <SplitPane fx:id="mainSplitPane" dividerPositions="0.5">
+            <items>
+                <!-- Left: Chess Board -->
+                <StackPane style="-fx-background-color: #fafafa;">
+                    <children>
+                        <GridPane fx:id="boardGrid" alignment="CENTER"
+                                  style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);"/>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </padding>
+                </StackPane>
+
+                <!-- Right: Tree Visualization (Hidden if checkbox off) -->
+                <StackPane fx:id="treeContainer" style="-fx-background-color: white;">
+                    <children>
+                        <Label text="Tree View" style="-fx-text-fill: #ccc;" StackPane.alignment="TOP_RIGHT">
+                            <padding>
+                                <Insets top="5" right="10"/>
+                            </padding>
+                        </Label>
+                    </children>
+                </StackPane>
+            </items>
+        </SplitPane>
+    </center>
+
+    <!-- RIGHT: Settings Sidebar -->
+    <right>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: #f4f4f4;">
+            <content>
+                <VBox spacing="15.0" style="-fx-background-color: #f4f4f4; -fx-padding: 15;">
+                    <children>
+                        <!-- Settings Section -->
+                        <Label text="Settings">
+                            <font>
+                                <Font name="System Bold" size="18.0"/>
+                            </font>
+                        </Label>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Board Size (N):"/>
+                                <Spinner fx:id="sizeSpinner" prefWidth="80.0"/>
+                            </children>
+                        </HBox>
+
+                        <VBox spacing="8.0">
+                            <children>
+                                <RadioButton fx:id="rbBacktrack" mnemonicParsing="false" selected="true"
+                                             text="Deterministic Backtrack">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="algoGroup"/>
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton fx:id="rbLasVegas" mnemonicParsing="false" text="Pure Las Vegas (Random)"
+                                             toggleGroup="$algoGroup"/>
+                                <RadioButton fx:id="rbMixed" mnemonicParsing="false" text="Mixed (Random + Backtrack)"
+                                             toggleGroup="$algoGroup"/>
+                            </children>
+                        </VBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Random Queens (k):"/>
+                                <Spinner fx:id="kSpinner" disable="true" prefWidth="70.0"/>
+                            </children>
+                            <VBox.margin>
+                                <Insets left="20.0"/>
+                            </VBox.margin>
+                        </HBox>
+
+                        <Separator/>
+
+                        <!-- Animation Control Section -->
+                        <Label text="Animation Control">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+
+                        <CheckBox fx:id="chkAnimate" mnemonicParsing="false" selected="true" text="Animate Process"/>
+                        <CheckBox fx:id="chkShowTree" mnemonicParsing="false" selected="true" text="Show Decision Tree"
+                                  onAction="#handleViewToggles"/>
+                        <CheckBox fx:id="chkShowLog" mnemonicParsing="false" selected="true" text="Show Log Panel"
+                                  onAction="#handleViewToggles"/>
+
+                        <Label text="Speed (Delay ms):"/>
+                        <Slider fx:id="speedSlider" blockIncrement="50.0" majorTickUnit="100.0" max="500.0" min="1.0"
+                                showTickLabels="true" showTickMarks="true" value="50.0"/>
+
+                        <HBox spacing="10.0">
+                            <children>
+                                <Button fx:id="pauseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                        onAction="#handlePause" text="Pause" HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="stopButton" disable="true" maxWidth="1.7976931348623157E308"
+                                        mnemonicParsing="false" onAction="#handleStop" text="Stop" textFill="#d00000"
+                                        HBox.hgrow="ALWAYS"/>
+                            </children>
+                        </HBox>
+
+                        <Button fx:id="solveButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleSolve" prefHeight="40.0"
+                                style="-fx-base: #4CAF50; -fx-font-weight: bold;" text="Run Algorithm"
+                                textFill="WHITE"/>
+
+                        <Button fx:id="resetButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleReset" text="Clear Board"/>
+
+                        <Label fx:id="statusLabel" text="Ready" textFill="#666666" wrapText="true">
+                            <font>
+                                <Font size="11.0"/>
+                            </font>
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </Label>
+                    </children>
+                </VBox>
+            </content>
+            <BorderPane.margin>
+                <Insets/>
+            </BorderPane.margin>
+        </ScrollPane>
+    </right>
+
+    <!-- BOTTOM: Log Panel -->
+    <bottom>
+        <VBox fx:id="logContainer" prefHeight="150.0" spacing="5.0"
+              style="-fx-padding: 10; -fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1 0 0 0;">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Algorithm Log" style="-fx-font-weight: bold;"/>
+                    <StackPane HBox.hgrow="ALWAYS"/>
+                    <Button text="Clear Log" onAction="#handleClearLog" style="-fx-font-size: 10px;"/>
+                </HBox>
+                <TextArea fx:id="logArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS"
+                          style="-fx-font-family: 'Consolas', 'Monospaced';"/>
+            </children>
+        </VBox>
+    </bottom>
+
+</BorderPane>

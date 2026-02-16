@@ -9,8 +9,8 @@ import java.io.PrintWriter;
 public class EightQueensBenchmark {
 
     private static final int BOARD_SIZE = 8;
-    private static final int TRIALS = 10000;
-    private static final int WARMUP = 1000;
+    private static final int TRIALS = 100000;
+    private static final int WARMUP = 10000;
 
     public static void main(String[] args) {
         System.out.println("==================================================");
@@ -19,7 +19,7 @@ public class EightQueensBenchmark {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save Benchmark Results");
-        fileChooser.setSelectedFile(new File("analysis/benchmark_results.csv"));
+        fileChooser.setSelectedFile(new File("analysis/eight_queens_benchmark.csv"));
 
         int userSelection = fileChooser.showSaveDialog(null);
 
